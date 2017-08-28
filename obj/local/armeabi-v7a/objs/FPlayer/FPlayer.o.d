@@ -24,11 +24,12 @@ obj/local/armeabi-v7a/objs/FPlayer/FPlayer.o: jni/FPlayer.c \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/sysmacros.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/memory.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/stdio.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/log.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/unistd.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/select.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/pthread.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/time.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/time.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/linux/time.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm/siginfo.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm-generic/siginfo.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/signal.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/limits.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/limits.h \
@@ -40,10 +41,12 @@ obj/local/armeabi-v7a/objs/FPlayer/FPlayer.o: jni/FPlayer.c \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm/signal.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm-generic/signal.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm/sigcontext.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm/siginfo.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm-generic/siginfo.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/ucontext.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/user.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sched.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/log.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/unistd.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/select.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/sysconf.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/linux/capability.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/pathconf.h \
@@ -71,24 +74,22 @@ obj/local/armeabi-v7a/objs/FPlayer/FPlayer.o: jni/FPlayer.c \
  jni/ffmpeg/libavutil/log.h jni/ffmpeg/libavutil/pixfmt.h \
  jni/ffmpeg/libavutil/rational.h jni/ffmpeg/libavcodec/version.h \
  jni/ffmpeg/libavutil/version.h jni/ffmpeg/libavcodec/old_codec_ids.h \
- jni/ffmpeg/libavformat/avformat.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/time.h \
- jni/ffmpeg/libavcodec/avcodec.h jni/ffmpeg/libavformat/avio.h \
- jni/ffmpeg/libavutil/common.h jni/ffmpeg/libavformat/version.h \
- jni/ffmpeg/libswscale/swscale.h jni/ffmpeg/libswscale/version.h \
- jni/libyuv/libyuv.h jni/libyuv/libyuv/basic_types.h \
- jni/libyuv/libyuv/compare.h jni/libyuv/libyuv/basic_types.h \
- jni/libyuv/libyuv/convert.h jni/libyuv/libyuv/convert_from.h \
- jni/libyuv/libyuv/rotate.h jni/libyuv/libyuv/planar_functions.h \
- jni/libyuv/libyuv/convert.h jni/libyuv/libyuv/convert_argb.h \
- jni/libyuv/libyuv/convert_argb.h jni/libyuv/libyuv/convert_from.h \
- jni/libyuv/libyuv/convert_from_argb.h jni/libyuv/libyuv/cpu_id.h \
- jni/libyuv/libyuv/mjpeg_decoder.h jni/libyuv/libyuv/planar_functions.h \
- jni/libyuv/libyuv/rotate.h jni/libyuv/libyuv/rotate_argb.h \
- jni/libyuv/libyuv/row.h jni/libyuv/libyuv/scale.h \
- jni/libyuv/libyuv/scale_argb.h jni/libyuv/libyuv/scale.h \
- jni/libyuv/libyuv/scale_row.h jni/libyuv/libyuv/version.h \
- jni/libyuv/libyuv/video_common.h \
+ jni/ffmpeg/libavformat/avformat.h jni/ffmpeg/libavcodec/avcodec.h \
+ jni/ffmpeg/libavformat/avio.h jni/ffmpeg/libavutil/common.h \
+ jni/ffmpeg/libavformat/version.h jni/ffmpeg/libswscale/swscale.h \
+ jni/ffmpeg/libswscale/version.h jni/libyuv/libyuv.h \
+ jni/libyuv/libyuv/basic_types.h jni/libyuv/libyuv/compare.h \
+ jni/libyuv/libyuv/basic_types.h jni/libyuv/libyuv/convert.h \
+ jni/libyuv/libyuv/convert_from.h jni/libyuv/libyuv/rotate.h \
+ jni/libyuv/libyuv/planar_functions.h jni/libyuv/libyuv/convert.h \
+ jni/libyuv/libyuv/convert_argb.h jni/libyuv/libyuv/convert_argb.h \
+ jni/libyuv/libyuv/convert_from.h jni/libyuv/libyuv/convert_from_argb.h \
+ jni/libyuv/libyuv/cpu_id.h jni/libyuv/libyuv/mjpeg_decoder.h \
+ jni/libyuv/libyuv/planar_functions.h jni/libyuv/libyuv/rotate.h \
+ jni/libyuv/libyuv/rotate_argb.h jni/libyuv/libyuv/row.h \
+ jni/libyuv/libyuv/scale.h jni/libyuv/libyuv/scale_argb.h \
+ jni/libyuv/libyuv/scale.h jni/libyuv/libyuv/scale_row.h \
+ jni/libyuv/libyuv/version.h jni/libyuv/libyuv/video_common.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window_jni.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/rect.h
@@ -143,15 +144,17 @@ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/memory.h:
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/stdio.h:
 
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/log.h:
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/pthread.h:
 
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/unistd.h:
-
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/select.h:
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/time.h:
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/time.h:
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/linux/time.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm/siginfo.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm-generic/siginfo.h:
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/signal.h:
 
@@ -175,13 +178,17 @@ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm-generic/sig
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm/sigcontext.h:
 
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm/siginfo.h:
-
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/asm-generic/siginfo.h:
-
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/ucontext.h:
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/user.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sched.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/log.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/unistd.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/select.h:
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/sysconf.h:
 
@@ -268,8 +275,6 @@ jni/ffmpeg/libavutil/version.h:
 jni/ffmpeg/libavcodec/old_codec_ids.h:
 
 jni/ffmpeg/libavformat/avformat.h:
-
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/time.h:
 
 jni/ffmpeg/libavcodec/avcodec.h:
 
