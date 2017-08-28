@@ -7,6 +7,7 @@
 #include <ffmpeg/libavcodec/avcodec.h>
 #include <ffmpeg/libavformat/avformat.h>
 #include <ffmpeg/libswscale/swscale.h>
+#include <ffmpeg/libswresample/swresample.h>
 
 #include <libyuv.h>
 #include <android/native_window_jni.h>
@@ -30,6 +31,25 @@ struct Player {
 	//解码线程ID
 	pthread_t decode_threads[MAX_STREAM];
 	ANativeWindow* nativeWindow;
+
+	/**
+	 * 音频解码相关数据
+	 */
+	SwrContext *swr_ctx;
+	//输入的采样格式
+	enum AVSampleFormat in_sample_fmt;
+	//输出采样格式16bit PCM
+	enum AVSampleFormat out_sample_fmt;
+	//输入采样率
+	int in_sample_rate;
+	//输出采样率
+	int out_sample_rate;
+	//输出的声道个数
+	int out_channel_nb;
+
+	//JNI
+	jobject audio_track;
+	jmethodID audio_track_write_mid;
 };
 
 int init_format_context(const char* c_inputstr, struct Player* player) {
@@ -171,8 +191,6 @@ void decode_video(struct Player* player, AVPacket *packet) {
 ;
 void decode_audio(struct Player* player, AVPacket *packet) {
 
-
-
 }
 ;
 
@@ -188,14 +206,20 @@ JNIEXPORT void JNICALL Java_com_example_fplayer_jni_PlayControl_startPlayer(
 		LOGE("%s", "init_format_context 中间出现错误！");
 		return;
 	};
-	//打开音频解码器
+	//打开视频解码器
 	int video_prepare = decode_stream_prepare(player,
 			player->video_stream_index);
 	if (video_prepare == 0) {
 		LOGE("%s", "decode_stream_prepare 中间出现错误！");
 		return;
 	};
-
+	//打开音频解码器
+	int video_prepare = decode_stream_prepare(player,
+			player->audio_stream_index);
+	if (video_prepare == 0) {
+		LOGE("%s", "decode_stream_prepare 中间出现错误！");
+		return;
+	};
 	//加载窗口
 	player->nativeWindow = ANativeWindow_fromSurface(env, surface);
 	//子线程解码
