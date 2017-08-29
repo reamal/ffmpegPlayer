@@ -77,7 +77,8 @@ obj/local/armeabi/objs/FPlayer/FPlayer.o: jni/FPlayer.c \
  jni/ffmpeg/libavformat/avformat.h jni/ffmpeg/libavcodec/avcodec.h \
  jni/ffmpeg/libavformat/avio.h jni/ffmpeg/libavutil/common.h \
  jni/ffmpeg/libavformat/version.h jni/ffmpeg/libswscale/swscale.h \
- jni/ffmpeg/libswscale/version.h jni/libyuv/libyuv.h \
+ jni/ffmpeg/libswscale/version.h jni/ffmpeg/libswresample/swresample.h \
+ jni/ffmpeg/libswresample/version.h jni/libyuv/libyuv.h \
  jni/libyuv/libyuv/basic_types.h jni/libyuv/libyuv/compare.h \
  jni/libyuv/libyuv/basic_types.h jni/libyuv/libyuv/convert.h \
  jni/libyuv/libyuv/convert_from.h jni/libyuv/libyuv/rotate.h \
@@ -287,6 +288,10 @@ jni/ffmpeg/libavformat/version.h:
 jni/ffmpeg/libswscale/swscale.h:
 
 jni/ffmpeg/libswscale/version.h:
+
+jni/ffmpeg/libswresample/swresample.h:
+
+jni/ffmpeg/libswresample/version.h:
 
 jni/libyuv/libyuv.h:
 
