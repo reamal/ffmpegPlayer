@@ -50,6 +50,9 @@ obj/local/armeabi/objs/FPlayer/FPlayer.o: jni/FPlayer.c \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/sysconf.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/linux/capability.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/pathconf.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window_jni.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window.h \
+ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/rect.h \
  jni/ffmpeg/libavcodec/avcodec.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/errno.h \
  F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/linux/errno.h \
@@ -90,10 +93,7 @@ obj/local/armeabi/objs/FPlayer/FPlayer.o: jni/FPlayer.c \
  jni/libyuv/libyuv/rotate_argb.h jni/libyuv/libyuv/row.h \
  jni/libyuv/libyuv/scale.h jni/libyuv/libyuv/scale_argb.h \
  jni/libyuv/libyuv/scale.h jni/libyuv/libyuv/scale_row.h \
- jni/libyuv/libyuv/version.h jni/libyuv/libyuv/video_common.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window_jni.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window.h \
- F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/rect.h
+ jni/libyuv/libyuv/version.h jni/libyuv/libyuv/video_common.h
 
 jni/com_example_fplayer_jni_PlayControl.h:
 
@@ -196,6 +196,12 @@ F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/sys/sysconf.h:
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/linux/capability.h:
 
 F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/pathconf.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window_jni.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window.h:
+
+F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/rect.h:
 
 jni/ffmpeg/libavcodec/avcodec.h:
 
@@ -342,9 +348,3 @@ jni/libyuv/libyuv/scale_row.h:
 jni/libyuv/libyuv/version.h:
 
 jni/libyuv/libyuv/video_common.h:
-
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window_jni.h:
-
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/native_window.h:
-
-F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include/android/rect.h:
