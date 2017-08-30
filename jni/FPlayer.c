@@ -222,12 +222,11 @@ void jni_audio_prepare(JNIEnv *env, jobject jobj, Player *player) {
 	DecoderData *decoder_data = (DecoderData*) arg;
 	Player *player = decoder_data->player;
 	int stream_index = decoder_data->stream_index;
-	LOGI("%s", "A");
+	AVFormatContext *format_ctx = player->av_fromat_context;
+	LOGI("%s : %d", "A",stream_index);
 	//There has a exception.
 	Queue* queue = player->packets[stream_index];
-
 	LOGI("%s", "B");
-	AVFormatContext *format_ctx = player->av_fromat_context;
 	int video_frame_count = 0, audio_frame_count = 0;
 	LOGI("%s", "C");
 	for (;;) {
@@ -366,17 +365,27 @@ void m_decode_pkt_audio(Player* player, AVPacket *packet) {
 ;
 
 /**
+ * 给AVPacket开辟空间，后面会将AVPacket栈内存数据拷贝至这里开辟的空间
+ */
+void* player_fill_packet() {
+	//请参照我在vs中写的代码
+	AVPacket *packet = malloc(sizeof(AVPacket));
+	return packet;
+}
+
+/**
  * 初始化音频，视频AVPacket队列，长度50
  */
 void player_alloc_queues(Player *player) {
-//	int i;
-	//这里，正常是初始化两个队列
-//	for (i = 0; i < player->captrue_streams_no; ++i) {
-//		Queue *queue = queue_init(PACKET_QUEUE_SIZE);
-//		player->packets[i] = queue;
-//	}
-	player->packets[player->audio_stream_index] = queue_init(PACKET_QUEUE_SIZE);
-	player->packets[player->video_stream_index] = queue_init(PACKET_QUEUE_SIZE);
+	int i;
+//	这里，正常是初始化两个队列
+	for (i = 0; i < player->captrue_streams_no; ++i) {
+		Queue *queue = queue_init(PACKET_QUEUE_SIZE,
+				(queue_fill_func) player_fill_packet);
+		player->packets[i] = queue;
+		//打印视频音频队列地址
+		LOGI("stream index:%d,queue:%#x", i, queue);
+	}
 }
 
 /**
@@ -394,7 +403,8 @@ void player_read_from_stream(Player* player) {
 		}
 		Queue *queue = player->packets[pkt->stream_index];
 		AVPacket* packet_data = queue_push(queue);
-		packet_data = pkt;
+		*packet_data = packet;
+		LOGI("queue:%#x, packet:%#x",queue,packet);
 	}
 }
 
