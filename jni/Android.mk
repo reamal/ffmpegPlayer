@@ -51,7 +51,7 @@ include $(PREBUILT_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := FPlayer
-LOCAL_SRC_FILES := FPlayer.c
+LOCAL_SRC_FILES := FPlayer.c queue.c
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/ffmpeg
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/libyuv
 LOCAL_LDLIBS := -landroid -llog 

@@ -93,7 +93,7 @@ obj/local/armeabi-v7a/objs/FPlayer/FPlayer.o: jni/FPlayer.c \
  jni/libyuv/libyuv/rotate_argb.h jni/libyuv/libyuv/row.h \
  jni/libyuv/libyuv/scale.h jni/libyuv/libyuv/scale_argb.h \
  jni/libyuv/libyuv/scale.h jni/libyuv/libyuv/scale_row.h \
- jni/libyuv/libyuv/version.h jni/libyuv/libyuv/video_common.h
+ jni/libyuv/libyuv/version.h jni/libyuv/libyuv/video_common.h jni/queue.h
 
 jni/com_example_fplayer_jni_PlayControl.h:
 
@@ -348,3 +348,5 @@ jni/libyuv/libyuv/scale_row.h:
 jni/libyuv/libyuv/version.h:
 
 jni/libyuv/libyuv/video_common.h:
+
+jni/queue.h:

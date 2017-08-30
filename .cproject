@@ -22,7 +22,7 @@
 					<folderInfo id="com.android.toolchain.gcc.1741038042.2106712950" name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.819380620" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.711737753" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder id="com.android.builder.1430169115" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
+							<builder arguments="NDK_DEBUG=1" command="ndk-build" id="com.android.builder.1430169115" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
 							<tool id="com.android.gcc.compiler.1359355614" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<inputType id="com.android.gcc.inputType.1434109101" superClass="com.android.gcc.inputType"/>
 							</tool>
@@ -42,5 +42,7 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.android.AndroidPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/FPlayer"/>
+	</storageModule>
 </cproject>
