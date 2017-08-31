@@ -1,0 +1,3 @@
+set solib-search-path ./obj/local/armeabi-v7a
+source F:/sdk/android-ndk-r10e/prebuilt/common/gdb/common.setup
+directory F:/sdk/android-ndk-r10e/platforms/android-9/arch-arm/usr/include jni/ffmpeg jni/libyuv F:/sdk/android-ndk-r10e/sources/cxx-stl/system
