@@ -19,7 +19,7 @@
 #define LOGE(FORMAT,...) __android_log_print(ANDROID_LOG_ERROR,"jniLog",FORMAT,##__VA_ARGS__);
 
 #define MAX_STREAM 2
-#define PACKET_QUEUE_SIZE 500
+#define PACKET_QUEUE_SIZE 1000
 #define MAX_AUDIO_FRME_SIZE 48000 * 4
 typedef struct _Player Player;
 typedef struct _DecoderData DecoderData;
@@ -213,32 +213,26 @@ void decode_data(void* arg) {
 		DecoderData *decoder_data = (DecoderData*) arg;
 		Player *player = decoder_data->player;
 		int stream_index = decoder_data->stream_index;
-		LOGI("%s : %d", "A", stream_index);
 		//根据stream_index获取对应的AVPacket队列
 		Queue *queue = player->packets[stream_index];
-		LOGI("%s", "B");
 		AVFormatContext *format_ctx = player->av_format_context;
 		//编码数据
-
 		//6.一阵一阵读取压缩的视频数据AVPacket
 		int video_frame_count = 0, audio_frame_count = 0;
 		for (;;) {
-			LOGI("%s", "C");
 			//消费AVPacket
 			AVPacket *packet = (AVPacket*) queue_pop(queue);
 			if (stream_index == player->video_stream_index) {
 				decode_video(player, packet);
-				LOGI("video_frame_count:%d", video_frame_count++);
 			} else if (stream_index == player->audio_stream_index) {
 				decode_audio(player, packet);
-				LOGI("audio_frame_count:%d", audio_frame_count++);
 			}
-
+			packet_free_func(packet);
 		}
 }
 ;
 
-JNIEXPORT void decode_video(Player* player, AVPacket *packet) {
+void decode_video(Player* player,AVPacket *packet) {
 	//像素数据。
 		AVFrame * av_frame_yuv = av_frame_alloc();
 		AVFrame * av_frame_rgb = av_frame_alloc();
@@ -273,7 +267,7 @@ JNIEXPORT void decode_video(Player* player, AVPacket *packet) {
 					player->input_codec_ctx[player->video_stream_index]->height);
 
 			ANativeWindow_unlockAndPost(player->nativeWindow);
-			usleep(1000*16); //需要调整
+//			usleep(1000*16); //需要调整
 		}
 
 		av_frame_free(&av_frame_yuv);
@@ -281,7 +275,7 @@ JNIEXPORT void decode_video(Player* player, AVPacket *packet) {
 		return;
 }
 ;
-JNIEXPORT void decode_audio(Player* player, AVPacket *packet) {
+void decode_audio(Player* player, AVPacket *packet) {
 	AVCodecContext *codec_ctx =
 			player->input_codec_ctx[player->audio_stream_index];
 	LOGI("%s", "decode_audio");
@@ -330,7 +324,7 @@ JNIEXPORT void decode_audio(Player* player, AVPacket *packet) {
 
 		(*javaVM)->DetachCurrentThread(javaVM);
 
-		usleep(1000 * 16);
+//		usleep(1000 * 16);
 	}
 
 	av_frame_free(&frame);
@@ -352,7 +346,7 @@ void* player_fill_packet() {
  */
 void player_alloc_queues(Player *player) {
 	int i;
-//	这里，正常是初始化两个队列
+	//这里，正常是初始化两个队列
 	for (i = 0; i < player->captrue_streams_no; ++i) {
 		Queue *queue = queue_init(PACKET_QUEUE_SIZE,
 				(queue_fill_func) player_fill_packet);
@@ -363,9 +357,8 @@ void player_alloc_queues(Player *player) {
 }
 ;
 
-void* packet_free_func(AVPacket *packet) {
+void packet_free_func(AVPacket *packet) {
 	av_free_packet(packet);
-	return 0;
 }
 
 /**
@@ -382,7 +375,7 @@ void* packet_free_func(AVPacket *packet) {
 		Queue *queue = player->packets[pkt->stream_index];
 		AVPacket* packet_data = queue_push(queue);
 		*packet_data = packet;
-		usleep(1000 * 4);
+//		usleep(1000*16);
 	}
 }
 ;
@@ -415,7 +408,7 @@ JNIEXPORT void JNICALL Java_com_example_fplayer_jni_PlayControl_startPlayer(
 	pthread_create(&(player->thread_read_from_stream), NULL,
 			player_read_from_stream, (void*) player);
 
-	usleep(1000);
+//	usleep(1000);
 
 	//子线程解码
 	DecoderData data1 = { player, player->video_stream_index }, *decoder_data1 =
