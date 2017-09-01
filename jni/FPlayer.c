@@ -15,17 +15,20 @@
 #include <libyuv.h>
 #include "queue.h"
 
-pthread_mutex_t mutex;
-pthread_cond_t has_cond;
+
+
 
 #define LOGI(FORMAT,...) __android_log_print(ANDROID_LOG_INFO,"jniLog",FORMAT,##__VA_ARGS__);
 #define LOGE(FORMAT,...) __android_log_print(ANDROID_LOG_ERROR,"jniLog",FORMAT,##__VA_ARGS__);
 
 #define MAX_STREAM 2
-#define PACKET_QUEUE_SIZE 1000
+#define PACKET_QUEUE_SIZE 100
 #define MAX_AUDIO_FRME_SIZE 48000 * 4
 typedef struct _Player Player;
 typedef struct _DecoderData DecoderData;
+
+pthread_mutex_t mutex;
+pthread_cond_t has_cond;
 
 struct _Player {
 
@@ -226,9 +229,16 @@ void decode_data(void* arg) {
 	int result_video = 0;
 	int result_audio = 0;
 	for (;;) {
-		if (get_ready(queue) <= 0 ) {
+
+		while (get_ready(queue) <= 0) {
+			pthread_cond_wait(&has_cond, &mutex);
+			LOGI("%s : %d", "pthread_cond_wait after",stream_index);
+		}
+
+		if (get_ready(queue) <= 0) {
 			continue;
 		}
+
 		//消费AVPacket
 		AVPacket *packet = (AVPacket*) queue_pop(queue);
 		if (stream_index == player->video_stream_index && !result_video) {
@@ -237,6 +247,7 @@ void decode_data(void* arg) {
 				&& !result_audio) {
 			result_audio = decode_audio(player, packet);
 		}
+
 		packet_free_func(packet);
 
 		if (result_video && result_audio) {
@@ -283,7 +294,6 @@ int decode_video(Player* player, AVPacket *packet) {
 				player->input_codec_ctx[player->video_stream_index]->height);
 
 		ANativeWindow_unlockAndPost(player->nativeWindow);
-//			usleep(1000*16); //需要调整
 	} else {
 		LOGI("%s : %d", "decode_video", ret);
 	}
@@ -342,8 +352,6 @@ int decode_audio(Player* player, AVPacket *packet) {
 
 		(*javaVM)->DetachCurrentThread(javaVM);
 
-//		usleep(1000 * 16);
-
 	} else {
 		LOGI("%s : %d", "decode_audio", ret);
 	}
@@ -372,8 +380,6 @@ void player_alloc_queues(Player *player) {
 		Queue *queue = queue_init(PACKET_QUEUE_SIZE,
 				(queue_fill_func) player_fill_packet);
 		player->packets[i] = queue;
-		//打印视频音频队列地址
-//		LOGI("stream index:%d,queue:%#x", i, queue);
 	}
 }
 ;
@@ -388,6 +394,7 @@ void packet_free_func(AVPacket *packet) {
 	int ret;
 	AVPacket packet, *pkt = &packet;
 	for (;;) {
+		pthread_mutex_lock(&mutex);
 		ret = av_read_frame(player->av_format_context, pkt);
 		if (ret < 0) {
 			LOGI("%s", "读取packet完成");
@@ -397,15 +404,20 @@ void packet_free_func(AVPacket *packet) {
 		AVPacket* packet_data = queue_push(queue);
 		*packet_data = packet;
 
-		LOGI("ready : %d", get_ready(queue));
+		pthread_cond_signal(&has_cond);
+		LOGI("ready : %d , stream : %d",get_ready(queue),pkt->stream_index);
+//		usleep(1000);
+
 		if (get_ready(queue) >= get_size(queue)) {
 			for (;;) {
-				usleep(100);
 				if (get_ready(queue) < get_size(queue)) {
 					break;
 				}
 			}
 		}
+
+		pthread_mutex_unlock(&mutex);
+
 	}
 }
 ;
@@ -433,6 +445,11 @@ JNIEXPORT void JNICALL Java_com_example_fplayer_jni_PlayControl_startPlayer(
 	jni_audio_prepare(env, jobj, player);
 
 	player_alloc_queues(player);
+
+
+	pthread_mutex_init(&mutex, NULL);
+
+	pthread_cond_init(&has_cond, NULL);
 
 	//生产者线程
 	pthread_create(&(player->thread_read_from_stream), NULL,
