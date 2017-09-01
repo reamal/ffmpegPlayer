@@ -15,6 +15,9 @@
 #include <libyuv.h>
 #include "queue.h"
 
+pthread_mutex_t mutex;
+pthread_cond_t has_cond;
+
 #define LOGI(FORMAT,...) __android_log_print(ANDROID_LOG_INFO,"jniLog",FORMAT,##__VA_ARGS__);
 #define LOGE(FORMAT,...) __android_log_print(ANDROID_LOG_ERROR,"jniLog",FORMAT,##__VA_ARGS__);
 
@@ -210,75 +213,89 @@ void jni_audio_prepare(JNIEnv *env, jobject jthiz, Player *player) {
  */
 void decode_data(void* arg) {
 
-		DecoderData *decoder_data = (DecoderData*) arg;
-		Player *player = decoder_data->player;
-		int stream_index = decoder_data->stream_index;
-		//根据stream_index获取对应的AVPacket队列
-		Queue *queue = player->packets[stream_index];
-		AVFormatContext *format_ctx = player->av_format_context;
-		//编码数据
-		//6.一阵一阵读取压缩的视频数据AVPacket
-		int video_frame_count = 0, audio_frame_count = 0;
-		for (;;) {
-			//消费AVPacket
-			AVPacket *packet = (AVPacket*) queue_pop(queue);
-			if (stream_index == player->video_stream_index) {
-				decode_video(player, packet);
-			} else if (stream_index == player->audio_stream_index) {
-				decode_audio(player, packet);
-			}
-			packet_free_func(packet);
+	DecoderData *decoder_data = (DecoderData*) arg;
+	Player *player = decoder_data->player;
+	int stream_index = decoder_data->stream_index;
+	//根据stream_index获取对应的AVPacket队列
+	Queue *queue = player->packets[stream_index];
+	AVFormatContext *format_ctx = player->av_format_context;
+	//编码数据
+	//6.一阵一阵读取压缩的视频数据AVPacket
+	int video_frame_count = 0, audio_frame_count = 0;
+
+	int result_video = 0;
+	int result_audio = 0;
+	for (;;) {
+		if (get_ready(queue) <= 0 ) {
+			continue;
 		}
+		//消费AVPacket
+		AVPacket *packet = (AVPacket*) queue_pop(queue);
+		if (stream_index == player->video_stream_index && !result_video) {
+			result_video = decode_video(player, packet);
+		} else if (stream_index == player->audio_stream_index
+				&& !result_audio) {
+			result_audio = decode_audio(player, packet);
+		}
+		packet_free_func(packet);
+
+		if (result_video && result_audio) {
+			break;
+		}
+	}
 }
 ;
 
-void decode_video(Player* player,AVPacket *packet) {
+int decode_video(Player* player, AVPacket *packet) {
 	//像素数据。
-		AVFrame * av_frame_yuv = av_frame_alloc();
-		AVFrame * av_frame_rgb = av_frame_alloc();
+	AVFrame * av_frame_yuv = av_frame_alloc();
+	AVFrame * av_frame_rgb = av_frame_alloc();
 
-		//绘制缓冲区
-		ANativeWindow_Buffer buffer;
+	//绘制缓冲区
+	ANativeWindow_Buffer buffer;
 
-		int got_frame = 0;
+	int got_frame = 0;
 
-		avcodec_decode_video2(player->input_codec_ctx[player->video_stream_index],
-				av_frame_yuv, &got_frame, packet);
+	int ret = avcodec_decode_video2(
+			player->input_codec_ctx[player->video_stream_index], av_frame_yuv,
+			&got_frame, packet);
+	if (ret < 0) {
+		return 1;
+	}
+	if (got_frame) {
+		//设置缓冲区的属性（宽、高、像素格式）
+		ANativeWindow_setBuffersGeometry(player->nativeWindow,
+				player->input_codec_ctx[player->video_stream_index]->width,
+				player->input_codec_ctx[player->video_stream_index]->height,
+				WINDOW_FORMAT_RGB_565);
+		ANativeWindow_lock(player->nativeWindow, &buffer, NULL);
 
-		if (got_frame) {
+		//设置rgb_frame的属性（像素格式、宽高）和缓冲区
+		//rgb_frame缓冲区与outBuffer.bits是同一块内存
+		avpicture_fill((AVPicture*) av_frame_rgb, buffer.bits, PIX_FMT_RGB565,
+				player->input_codec_ctx[player->video_stream_index]->width,
+				player->input_codec_ctx[player->video_stream_index]->height);
+		I420ToRGB565(av_frame_yuv->data[0], av_frame_yuv->linesize[0],
+				av_frame_yuv->data[1], av_frame_yuv->linesize[1],
+				av_frame_yuv->data[2], av_frame_yuv->linesize[2],
+				av_frame_rgb->data[0], av_frame_rgb->linesize[0],
+				player->input_codec_ctx[player->video_stream_index]->width,
+				player->input_codec_ctx[player->video_stream_index]->height);
 
-			//设置缓冲区的属性（宽、高、像素格式）
-			ANativeWindow_setBuffersGeometry(player->nativeWindow,
-					player->input_codec_ctx[player->video_stream_index]->width,
-					player->input_codec_ctx[player->video_stream_index]->height,
-					WINDOW_FORMAT_RGB_565);
-			ANativeWindow_lock(player->nativeWindow, &buffer, NULL);
-
-			//设置rgb_frame的属性（像素格式、宽高）和缓冲区
-			//rgb_frame缓冲区与outBuffer.bits是同一块内存
-			avpicture_fill((AVPicture*) av_frame_rgb, buffer.bits, PIX_FMT_RGB565,
-					player->input_codec_ctx[player->video_stream_index]->width,
-					player->input_codec_ctx[player->video_stream_index]->height);
-			I420ToRGB565(av_frame_yuv->data[0], av_frame_yuv->linesize[0],
-					av_frame_yuv->data[1], av_frame_yuv->linesize[1],
-					av_frame_yuv->data[2], av_frame_yuv->linesize[2],
-					av_frame_rgb->data[0], av_frame_rgb->linesize[0],
-					player->input_codec_ctx[player->video_stream_index]->width,
-					player->input_codec_ctx[player->video_stream_index]->height);
-
-			ANativeWindow_unlockAndPost(player->nativeWindow);
+		ANativeWindow_unlockAndPost(player->nativeWindow);
 //			usleep(1000*16); //需要调整
-		}
+	} else {
+		LOGI("%s : %d", "decode_video", ret);
+	}
 
-		av_frame_free(&av_frame_yuv);
-		av_frame_free(&av_frame_rgb);
-		return;
+	av_frame_free(&av_frame_yuv);
+	av_frame_free(&av_frame_rgb);
+	return 0;
 }
 ;
-void decode_audio(Player* player, AVPacket *packet) {
+int decode_audio(Player* player, AVPacket *packet) {
 	AVCodecContext *codec_ctx =
 			player->input_codec_ctx[player->audio_stream_index];
-	LOGI("%s", "decode_audio");
 	//解压缩数据
 	AVFrame *frame = av_frame_alloc();
 
@@ -287,9 +304,10 @@ void decode_audio(Player* player, AVPacket *packet) {
 
 	int got_frame;
 
-	avcodec_decode_audio4(codec_ctx, frame, &got_frame, packet);
-
-
+	int ret = avcodec_decode_audio4(codec_ctx, frame, &got_frame, packet);
+	if (ret < 0) {
+		return 1;
+	}
 	//解码一帧成功
 	if (got_frame > 0) {
 		swr_convert(player->swr_ctx, &out_buffer, MAX_AUDIO_FRME_SIZE,
@@ -325,9 +343,12 @@ void decode_audio(Player* player, AVPacket *packet) {
 		(*javaVM)->DetachCurrentThread(javaVM);
 
 //		usleep(1000 * 16);
-	}
 
+	} else {
+		LOGI("%s : %d", "decode_audio", ret);
+	}
 	av_frame_free(&frame);
+	return 0;
 }
 ;
 
@@ -352,7 +373,7 @@ void player_alloc_queues(Player *player) {
 				(queue_fill_func) player_fill_packet);
 		player->packets[i] = queue;
 		//打印视频音频队列地址
-		LOGI("stream index:%d,queue:%#x", i, queue);
+//		LOGI("stream index:%d,queue:%#x", i, queue);
 	}
 }
 ;
@@ -375,7 +396,16 @@ void packet_free_func(AVPacket *packet) {
 		Queue *queue = player->packets[pkt->stream_index];
 		AVPacket* packet_data = queue_push(queue);
 		*packet_data = packet;
-//		usleep(1000*16);
+
+		LOGI("ready : %d", get_ready(queue));
+		if (get_ready(queue) >= get_size(queue)) {
+			for (;;) {
+				usleep(100);
+				if (get_ready(queue) < get_size(queue)) {
+					break;
+				}
+			}
+		}
 	}
 }
 ;

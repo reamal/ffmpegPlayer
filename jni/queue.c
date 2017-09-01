@@ -8,7 +8,7 @@ struct _Queue {
 	int next_to_write;
 	int next_to_read;
 
-	int *ready;
+	int ready;
 };
 
 /**
@@ -19,7 +19,7 @@ Queue* queue_init(int size, queue_fill_func fill_func) {
 	queue->size = size;
 	queue->next_to_read = 0;
 	queue->next_to_write = 0;
-
+	queue->ready = 0;
 	//数组开辟空间
 	queue->tab = malloc(sizeof(*queue->tab) * size);
 
@@ -47,24 +47,44 @@ void queue_free(Queue* queue, queue_free_func free_func) {
 /**
  * 获取下一个索引的位置
  */
-int queue_get_next(Queue* queue, int current){
-	return (current+1)%queue->size;
-};
+int queue_get_next(Queue* queue, int current) {
+	return (current + 1) % queue->size;
+}
+;
 
 /**
  * 压元素入队
  */
-void* queue_push(Queue* queue){
+void* queue_push(Queue* queue) {
+	queue->ready++;
 	int current = queue->next_to_write;
-	queue->next_to_write = queue_get_next(queue,current);
+	queue->next_to_write = queue_get_next(queue, current);
 	return queue->tab[current];
-};
+}
+;
 
 /**
  * 弹出元素
  */
-void* queue_pop(Queue* queue){
+void* queue_pop(Queue* queue) {
+	queue->ready--;
 	int current = queue->next_to_read;
-	queue->next_to_read= queue_get_next(queue,current);
+	queue->next_to_read = queue_get_next(queue, current);
 	return queue->tab[current];
+}
+;
+
+/*
+ * 当前队列中的包数量
+ */
+int get_ready(Queue* queue){
+	return queue->ready;
 };
+
+/*
+ * 队列大小
+ */
+int get_size(Queue* queue){
+	return queue->size;
+};
+

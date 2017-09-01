@@ -27,3 +27,13 @@ void* queue_push(Queue* queue);
  * 弹出元素
  */
 void* queue_pop(Queue* queue);
+
+/*
+ * 当前队列中的包数量
+ */
+int get_ready(Queue* queue);
+
+/*
+ * 队列大小
+ */
+int get_size(Queue* queue);
